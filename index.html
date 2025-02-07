@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Belgian Tax Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .calculation-step {
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #f5f5f5;
+            border-radius: 4px;
+        }
+        input {
+            padding: 8px;
+            margin: 5px;
+        }
+        .number-input {
+            width: 120px;
+        }
+        .tax-bracket {
+            margin: 5px 0;
+            padding: 5px;
+            border-left: 3px solid #4CAF50;
+        }
+        .bracket-editor {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            gap: 10px;
+        }
+        .bracket-editor label {
+            min-width: 60px;
+        }
+        .info-text {
+            font-size: 0.9em;
+            color: #666;
+            margin-left: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Belgian Tax Calculator</h1>
+    
+    <div class="calculation-step">
+        <h3>Salary Information</h3>
+        <div class="bracket-editor">
+            <label for="monthlySalary">Monthly Gross Salary (€):</label>
+            <input type="number" class="number-input" id="monthlySalary" placeholder="Enter monthly salary" oninput="calculateTax()">
+        </div>
+        <div class="bracket-editor">
+            <label for="yearMultiplier">Yearly Multiplier:</label>
+            <input type="number" class="number-input" id="yearMultiplier" value="13.92" step="0.01" oninput="calculateTax()">
+            <span class="info-text">(Default: 13.92 - includes holiday pay and 13th month)</span>
+        </div>
+    </div>
+
+    <div class="calculation-step">
+        <h3>RSZ (Social Security) Rate</h3>
+        <div class="bracket-editor">
+            <label>Rate:</label>
+            <input type="number" class="number-input" id="rszRate" value="13.07" step="0.01" oninput="calculateTax()">
+            <span class="info-text">% (Default: 13.07%)</span>
+        </div>
+    </div>
+
+    <div class="calculation-step">
+        <h3>Tax-Free Amount</h3>
+        <div class="bracket-editor">
+            <label>Amount:</label>
+            <input type="number" class="number-input" id="taxFreeAmount" value="9850" oninput="calculateTax()">
+            <span class="info-text">(Default: 9,850€ for 2024)</span>
+        </div>
+    </div>
+
+    <div class="calculation-step">
+        <h3>Tax Brackets</h3>
+        <div id="bracketEditors">
+            <div class="bracket-editor">
+                <label>Bracket 1:</label>
+                <input type="number" class="number-input" id="bracket1" value="15200" oninput="calculateTax()">
+                <span>€ up to</span>
+                <input type="number" class="number-input" style="width: 80px" id="rate1" value="25" oninput="calculateTax()">
+                <span>%</span>
+            </div>
+            <div class="bracket-editor">
+                <label>Bracket 2:</label>
+                <input type="number" class="number-input" id="bracket2" value="26830" oninput="calculateTax()">
+                <span>€ up to</span>
+                <input type="number" class="number-input" style="width: 80px" id="rate2" value="40" oninput="calculateTax()">
+                <span>%</span>
+            </div>
+            <div class="bracket-editor">
+                <label>Bracket 3:</label>
+                <input type="number" class="number-input" id="bracket3" value="46440" oninput="calculateTax()">
+                <span>€ up to</span>
+                <input type="number" class="number-input" style="width: 80px" id="rate3" value="45" oninput="calculateTax()">
+                <span>%</span>
+            </div>
+            <div class="bracket-editor">
+                <label>Bracket 4:</label>
+                <span>Above previous bracket</span>
+                <input type="number" class="number-input" style="width: 80px" id="rate4" value="50" oninput="calculateTax()">
+                <span>%</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="results">
+        <h2>Tax Calculation Details</h2>
+        <div class="calculation-step">
+            <h3>Annual Income</h3>
+            <div id="yearlyIncome"></div>
+        </div>
+
+        <div class="calculation-step">
+            <h3>RSZ Calculation</h3>
+            <div id="rszCalculation"></div>
+        </div>
+
+        <div class="calculation-step">
+            <h3>Tax-Free Amount Deduction</h3>
+            <div id="taxFreeCalculation"></div>
+        </div>
+
+        <div class="calculation-step">
+            <h3>Tax Brackets Breakdown</h3>
+            <div id="taxBrackets"></div>
+        </div>
+
+        <div class="calculation-step">
+            <h3>Final Results</h3>
+            <div id="finalResults"></div>
+        </div>
+    </div>
+
+    <script>
+        function calculateTax() {
+            const monthlySalary = parseFloat(document.getElementById('monthlySalary').value) || 0;
+            const yearMultiplier = parseFloat(document.getElementById('yearMultiplier').value) || 13.92;
+            const rszRate = parseFloat(document.getElementById('rszRate').value) || 13.07;
+            const yearlyIncome = monthlySalary * yearMultiplier;
+            const taxFreeAmount = parseFloat(document.getElementById('taxFreeAmount').value) || 0;
+
+            // Calculate RSZ
+            const yearlyRSZ = yearlyIncome * (rszRate / 100);
+            const incomeAfterRSZ = yearlyIncome - yearlyRSZ;
+
+            // Update yearly income display
+            document.getElementById('yearlyIncome').innerHTML = `
+                Monthly Salary: €${monthlySalary.toFixed(2)}<br>
+                × ${yearMultiplier} (yearly multiplier)<br>
+                = €${yearlyIncome.toFixed(2)} yearly gross income
+            `;
+
+            // Display RSZ calculation
+            document.getElementById('rszCalculation').innerHTML = `
+                Yearly gross income: €${yearlyIncome.toFixed(2)}<br>
+                RSZ rate: ${rszRate}%<br>
+                RSZ amount: -€${yearlyRSZ.toFixed(2)}<br>
+                Income after RSZ: €${incomeAfterRSZ.toFixed(2)}
+            `;
+
+            // Display tax-free calculation
+            document.getElementById('taxFreeCalculation').innerHTML = `
+                Income after RSZ: €${incomeAfterRSZ.toFixed(2)}<br>
+                Tax-free amount: -€${taxFreeAmount.toFixed(2)}<br>
+                Taxable income: €${(incomeAfterRSZ - taxFreeAmount).toFixed(2)}
+            `;
+
+            // Get bracket values from inputs
+            const brackets = [
+                { 
+                    limit: parseFloat(document.getElementById('bracket1').value), 
+                    rate: parseFloat(document.getElementById('rate1').value) 
+                },
+                { 
+                    limit: parseFloat(document.getElementById('bracket2').value), 
+                    rate: parseFloat(document.getElementById('rate2').value) 
+                },
+                { 
+                    limit: parseFloat(document.getElementById('bracket3').value), 
+                    rate: parseFloat(document.getElementById('rate3').value) 
+                },
+                { 
+                    limit: Infinity, 
+                    rate: parseFloat(document.getElementById('rate4').value) 
+                }
+            ];
+
+            let remainingIncome = Math.max(0, incomeAfterRSZ - taxFreeAmount);
+            let totalTax = 0;
+            let bracketResults = '';
+            let previousLimit = 0;
+
+            // Calculate tax for each bracket
+            for (const bracket of brackets) {
+                const bracketWidth = bracket.limit - previousLimit;
+                const taxableInThisBracket = Math.min(remainingIncome, bracketWidth);
+                
+                if (taxableInThisBracket > 0) {
+                    const taxInBracket = taxableInThisBracket * (bracket.rate / 100);
+                    totalTax += taxInBracket;
+
+                    bracketResults += `
+                        <div class="tax-bracket">
+                            ${bracket.rate}% bracket (€${previousLimit.toFixed(2)} to €${bracket.limit === Infinity ? '∞' : bracket.limit.toFixed(2)})<br>
+                            Taxable amount in this bracket: €${taxableInThisBracket.toFixed(2)}<br>
+                            Tax in this bracket: €${taxInBracket.toFixed(2)}
+                        </div>
+                    `;
+
+                    remainingIncome -= taxableInThisBracket;
+                }
+                previousLimit = bracket.limit;
+            }
+
+            // Update tax brackets breakdown
+            document.getElementById('taxBrackets').innerHTML = bracketResults;
+
+            // Calculate and display final results
+            const effectiveRate = ((totalTax + yearlyRSZ) / yearlyIncome) * 100;
+            const monthlyTax = totalTax / 12;
+            const monthlyRSZ = yearlyRSZ / 12;
+            const monthlyNetSalary = (yearlyIncome - totalTax - yearlyRSZ) / 12;
+
+            document.getElementById('finalResults').innerHTML = `
+                Total yearly RSZ: €${yearlyRSZ.toFixed(2)}<br>
+                Total yearly tax: €${totalTax.toFixed(2)}<br>
+                Combined effective rate: ${effectiveRate.toFixed(2)}%<br>
+                Monthly RSZ: €${monthlyRSZ.toFixed(2)}<br>
+                Monthly tax: €${monthlyTax.toFixed(2)}<br>
+                Monthly net salary: €${monthlyNetSalary.toFixed(2)}
+            `;
+        }
+
+        // Initial calculation
+        calculateTax();
+    </script>
+</body>
+</html>
