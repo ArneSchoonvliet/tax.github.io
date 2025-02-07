@@ -72,7 +72,7 @@
         <h3>Tax-Free Amount</h3>
         <div class="bracket-editor">
             <label>Amount:</label>
-            <input type="number" class="number-input" id="taxFreeAmount" value="9850" oninput="calculateTax()">
+            <input type="number" class="number-input" id="taxFreeAmount" value="10570" oninput="calculateTax()">
             <span class="info-text">(Default: 9,850€ for 2024)</span>
         </div>
     </div>
@@ -82,21 +82,21 @@
         <div id="bracketEditors">
             <div class="bracket-editor">
                 <label>Bracket 1:</label>
-                <input type="number" class="number-input" id="bracket1" value="15200" oninput="calculateTax()">
+                <input type="number" class="number-input" id="bracket1" value="15820" oninput="calculateTax()">
                 <span>€ up to</span>
                 <input type="number" class="number-input" style="width: 80px" id="rate1" value="25" oninput="calculateTax()">
                 <span>%</span>
             </div>
             <div class="bracket-editor">
                 <label>Bracket 2:</label>
-                <input type="number" class="number-input" id="bracket2" value="26830" oninput="calculateTax()">
+                <input type="number" class="number-input" id="bracket2" value="27920" oninput="calculateTax()">
                 <span>€ up to</span>
                 <input type="number" class="number-input" style="width: 80px" id="rate2" value="40" oninput="calculateTax()">
                 <span>%</span>
             </div>
             <div class="bracket-editor">
                 <label>Bracket 3:</label>
-                <input type="number" class="number-input" id="bracket3" value="46440" oninput="calculateTax()">
+                <input type="number" class="number-input" id="bracket3" value="48320" oninput="calculateTax()">
                 <span>€ up to</span>
                 <input type="number" class="number-input" style="width: 80px" id="rate3" value="45" oninput="calculateTax()">
                 <span>%</span>
@@ -112,6 +112,11 @@
 
     <div id="results">
         <h2>Tax Calculation Details</h2>
+        <div class="calculation-step">
+            <h3>Final Results</h3>
+            <div id="finalResults"></div>
+        </div>
+
         <div class="calculation-step">
             <h3>Annual Income</h3>
             <div id="yearlyIncome"></div>
@@ -132,10 +137,6 @@
             <div id="taxBrackets"></div>
         </div>
 
-        <div class="calculation-step">
-            <h3>Final Results</h3>
-            <div id="finalResults"></div>
-        </div>
     </div>
 
     <script>
